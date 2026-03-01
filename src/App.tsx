@@ -2,14 +2,10 @@ import { useState, useMemo } from 'react';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ParameterPanel } from '@/components/buy-vs-rent/parameter-panel';
 import { ResultsPanel } from '@/components/buy-vs-rent/results-panel';
+import { ShareButton } from '@/components/share-button';
 import { runDashboard } from '@/lib/calculators/dashboard';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
-import {
-  DEFAULT_PARAMS,
-  DEFAULT_SCENARIO_TOGGLES,
-  DEFAULT_SELL_AND_REBUY_PARAMS,
-  DEFAULT_KEEP_AND_RENT_OUT_PARAMS,
-} from '@/types/buy-vs-rent';
+import { decodeStateFromUrl } from '@/lib/utils/url-params';
 import type {
   BuyVsRentParams,
   ScenarioToggles,
@@ -17,11 +13,13 @@ import type {
   KeepAndRentOutParams,
 } from '@/types/buy-vs-rent';
 
+const initialState = decodeStateFromUrl();
+
 export default function App() {
-  const [params, setParams] = useState<BuyVsRentParams>(DEFAULT_PARAMS);
-  const [toggles, setToggles] = useState<ScenarioToggles>(DEFAULT_SCENARIO_TOGGLES);
-  const [sellAndRebuyParams, setSellAndRebuyParams] = useState<SellAndRebuyParams>(DEFAULT_SELL_AND_REBUY_PARAMS);
-  const [keepAndRentOutParams, setKeepAndRentOutParams] = useState<KeepAndRentOutParams>(DEFAULT_KEEP_AND_RENT_OUT_PARAMS);
+  const [params, setParams] = useState<BuyVsRentParams>(initialState.params);
+  const [toggles, setToggles] = useState<ScenarioToggles>(initialState.toggles);
+  const [sellAndRebuyParams, setSellAndRebuyParams] = useState<SellAndRebuyParams>(initialState.sellParams);
+  const [keepAndRentOutParams, setKeepAndRentOutParams] = useState<KeepAndRentOutParams>(initialState.keepParams);
 
   const debouncedParams = useDebouncedValue(params, 100);
   const debouncedToggles = useDebouncedValue(toggles, 100);
@@ -54,8 +52,18 @@ export default function App() {
     <TooltipProvider>
       <div className="min-h-screen bg-background">
         <header className="border-b px-6 py-4">
-          <h1 className="text-xl font-bold">UK Property Guide</h1>
-          <p className="text-sm text-muted-foreground">Buy vs Rent Comparison Dashboard</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold">UK Property Guide</h1>
+              <p className="text-sm text-muted-foreground">Buy vs Rent Comparison Dashboard</p>
+            </div>
+            <ShareButton
+              params={params}
+              toggles={toggles}
+              sellParams={sellAndRebuyParams}
+              keepParams={keepAndRentOutParams}
+            />
+          </div>
         </header>
 
         <main className="p-4 md:p-6 max-w-[1400px] mx-auto">
