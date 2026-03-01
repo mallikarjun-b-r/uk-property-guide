@@ -18,12 +18,29 @@ interface ShareButtonProps {
 export function ShareButton({ params, toggles, sellParams, keepParams }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback(async () => {
     const url = encodeStateToUrl(params, toggles, sellParams, keepParams);
-    navigator.clipboard.writeText(url).then(() => {
+
+    let success = false;
+    try {
+      await navigator.clipboard.writeText(url);
+      success = true;
+    } catch {
+      // Fallback for non-secure contexts (e.g. HTTP)
+      const textarea = document.createElement('textarea');
+      textarea.value = url;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      success = document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+
+    if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    });
+    }
   }, [params, toggles, sellParams, keepParams]);
 
   return (
