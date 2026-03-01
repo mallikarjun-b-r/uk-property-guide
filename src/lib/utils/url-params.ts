@@ -83,16 +83,12 @@ export function encodeStateToUrl(
 
   for (const [objKey, reverseMap] of Object.entries(REVERSE_KEYS)) {
     const current = stateObjects[objKey];
-    const defaults = DEFAULTS[objKey];
     for (const [fullKey, shortKey] of Object.entries(reverseMap)) {
       const val = current[fullKey as keyof typeof current];
-      const def = defaults[fullKey as keyof typeof defaults];
-      if (val !== def) {
-        if (typeof val === 'boolean') {
-          searchParams.set(shortKey, val ? '1' : '0');
-        } else {
-          searchParams.set(shortKey, String(val));
-        }
+      if (typeof val === 'boolean') {
+        searchParams.set(shortKey, val ? '1' : '0');
+      } else {
+        searchParams.set(shortKey, String(val));
       }
     }
   }
