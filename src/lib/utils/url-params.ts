@@ -54,11 +54,16 @@ for (const [short, { obj, key }] of Object.entries(PARAM_KEYS)) {
   REVERSE_KEYS[obj][key] = short;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toRecord(obj: any): Record<string, unknown> {
+  return obj;
+}
+
 const DEFAULTS: Record<string, Record<string, unknown>> = {
-  p: DEFAULT_PARAMS,
-  t: DEFAULT_SCENARIO_TOGGLES,
-  s: DEFAULT_SELL_AND_REBUY_PARAMS,
-  k: DEFAULT_KEEP_AND_RENT_OUT_PARAMS,
+  p: toRecord(DEFAULT_PARAMS),
+  t: toRecord(DEFAULT_SCENARIO_TOGGLES),
+  s: toRecord(DEFAULT_SELL_AND_REBUY_PARAMS),
+  k: toRecord(DEFAULT_KEEP_AND_RENT_OUT_PARAMS),
 };
 
 export function encodeStateToUrl(
@@ -68,10 +73,10 @@ export function encodeStateToUrl(
   keepParams: KeepAndRentOutParams,
 ): string {
   const stateObjects: Record<string, Record<string, unknown>> = {
-    p: params,
-    t: toggles,
-    s: sellParams,
-    k: keepParams,
+    p: toRecord(params),
+    t: toRecord(toggles),
+    s: toRecord(sellParams),
+    k: toRecord(keepParams),
   };
 
   const searchParams = new URLSearchParams();
